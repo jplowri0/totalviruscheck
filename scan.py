@@ -19,9 +19,14 @@ with vt.Client(key) as client:    # using with to automatically close the sessio
         writer=csv.writer(f,delimiter=',')
         for url in url_list:
             #REF: https://virustotal.github.io/vt-py/quickstart.html#get-information-about-an-url
-            url_id = vt.url_id(url)
-            url_obj = client.get_object("/urls/{}".format(url_id))
-            result = url_obj.last_analysis_stats 
+            try:
+                url_id = vt.url_id(url)
+                url_obj = client.get_object("/urls/{}".format(url_id))
+                result = url_obj.last_analysis_stats 
+            except vt.APIError as e: # Catch APIError as a result of rate limitations and try again
+                print(f"API ERR ({str(e.code)}): {e}")
+                time.sleep(5)
+                continue
 
             data = [url]
             for k, v in result.items():
