@@ -6,9 +6,13 @@ import pandas as pd
 import csv
 
 
-key = "KEY_HERE" #vt api key 
+key = "KEY" #vt api key 
 
-url_list = ["https://bing.com", "http://acmetoy.com"] #test urls 
+#reading in the cleaned csv 
+read_csv = pd.read_csv("inputCleaned.csv")
+url_list = read_csv['URL'].tolist()
+
+#url_list = [ "https://bing.com", "http://acmetoy.com"] #test urls 
 
 with vt.Client(key) as client:    # using with to automatically close the session
     with open('loop.csv', 'w') as f: #writing the looped output to a csv 
@@ -27,10 +31,7 @@ with vt.Client(key) as client:    # using with to automatically close the sessio
             #extracted_result=result_string.replace("{","").replace("}","").replace("'","").replace("harmless: ","").replace(" malicious: ","").replace(" suspicious: ","").replace(" undetected: ","").replace(" timeout: ","") #removeing all the excess characaters. 
             #data=url+","+extracted_result #creating the string which should go as a row into a csv. 
             writer.writerow(data)
+            print(data)
 
-            time.sleep(5) #sleep in seconds 
+            time.sleep(16) #sleep in seconds 
 
-df = pd.read_csv("loop.csv",delimiter=',')
-#header_list = ['URL', 'Harmless', 'Malicous','Suspicious', 'Undetected', 'Timeout'] 
-df.to_csv("scoresApplied.csv")
-print(df)
